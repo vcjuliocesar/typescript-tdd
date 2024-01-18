@@ -8,16 +8,17 @@ export class UserRepository{
     constructor(private db:PrismaClient = PrismaSingleton.getInstance()){}
 
     async create(user:createUserDto){
-        const newUser = await this.db.user.create({
-            data:user
-        }).then(async()=>{
+        try {
+            const newUser = await this.db.user.create({
+                data:user
+            })
+            
+            return newUser 
+        } catch (error) {
+            console.error('Error al crear el usuario:', error);
+        }finally{
             await this.db.$disconnect()
-        }).catch(async (e) => {
-            console.error(e)
-            await this.db.$disconnect()
-            process.exit(1)
-        })
-
-        return newUser
+        }
+        
     }
 }
